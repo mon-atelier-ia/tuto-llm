@@ -30,10 +30,7 @@ def softmax(scores: list[float]) -> list[float]:
 
 def mat_vec(mat: list[list[float]], vec: list[float]) -> list[float]:
     """Multiplication matrice x vecteur."""
-    return [
-        sum(mat[i][j] * vec[j] for j in range(len(vec)))
-        for i in range(len(mat))
-    ]
+    return [sum(mat[i][j] * vec[j] for j in range(len(vec))) for i in range(len(mat))]
 
 
 def vec_add(a: list[float], b: list[float]) -> list[float]:
@@ -46,13 +43,9 @@ def relu(x: list[float]) -> list[float]:
     return [max(0.0, v) for v in x]
 
 
-def rand_matrix(
-    rows: int, cols: int, scale: float = 0.3
-) -> list[list[float]]:
+def rand_matrix(rows: int, cols: int, scale: float = 0.3) -> list[list[float]]:
     """Génère une matrice aléatoire gaussienne."""
-    return [
-        [random.gauss(0, scale) for _ in range(cols)] for _ in range(rows)
-    ]
+    return [[random.gauss(0, scale) for _ in range(cols)] for _ in range(rows)]
 
 
 # ---------------------------------------------------------------------------
@@ -108,9 +101,7 @@ def forward_llm(
     for i in range(n):
         k = mat_vec(wk, hidden[i])
         v = mat_vec(wv, hidden[i])
-        score = (
-            sum(q[d] * k[d] for d in range(embed_dim)) / math.sqrt(embed_dim)
-        )
+        score = sum(q[d] * k[d] for d in range(embed_dim)) / math.sqrt(embed_dim)
         scores.append(score)
         values.append(v)
 

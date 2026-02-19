@@ -50,6 +50,7 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "**/tests/**" = ["S101", "S603", "SIM117"]
 "**/conftest.py" = ["S101"]
+"**/notebooks/**" = ["B007", "SIM108"]  # code éducatif : clarté > concision
 
 # =============================================================================
 # MYPY — ISO 5055 (Type Safety)
