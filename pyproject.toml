@@ -87,3 +87,12 @@ exclude_lines = [
     "raise NotImplementedError",
     "\\.\\.\\.",
 ]
+
+# =============================================================================
+# COMMITIZEN — ISO 12207 (Conventional Commits)
+# =============================================================================
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.0.0"
+tag_format = "v$version"
+allowed_prefixes = ["build", "bump", "chore", "ci", "docs", "feat", "fix", "perf", "refactor", "revert", "style", "test"]
