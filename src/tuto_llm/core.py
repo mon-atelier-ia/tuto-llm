@@ -12,7 +12,6 @@ import random
 
 from tuto_llm.vocab import VOCAB_SIZE, char_to_id, id_to_char
 
-
 # ---------------------------------------------------------------------------
 # Fonctions mathématiques de base (notebooks 3 & 5)
 # ---------------------------------------------------------------------------
@@ -39,7 +38,7 @@ def mat_vec(mat: list[list[float]], vec: list[float]) -> list[float]:
 
 def vec_add(a: list[float], b: list[float]) -> list[float]:
     """Addition élément par élément de deux vecteurs."""
-    return [x + y for x, y in zip(a, b)]
+    return [x + y for x, y in zip(a, b, strict=True)]
 
 
 def relu(x: list[float]) -> list[float]:

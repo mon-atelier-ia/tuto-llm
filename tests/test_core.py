@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 import random
 
 import pytest
@@ -18,7 +17,6 @@ from tuto_llm.core import (
     vec_add,
 )
 from tuto_llm.vocab import VOCAB_SIZE, char_to_id
-
 
 # ---------------------------------------------------------------------------
 # TestSoftmax
