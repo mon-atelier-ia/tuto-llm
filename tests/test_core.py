@@ -12,6 +12,7 @@ from tuto_llm.core import (
     generer_llm,
     mat_vec,
     rand_matrix,
+    rand_vector,
     relu,
     softmax,
     vec_add,
@@ -156,6 +157,54 @@ class TestRandMatrix:
         max_small = max(abs(v) for row in small for v in row)
         max_big = max(abs(v) for row in big for v in row)
         assert max_big > max_small * 10
+
+
+# ---------------------------------------------------------------------------
+# TestRandVector
+# ---------------------------------------------------------------------------
+
+
+class TestRandVector:
+    """Tests pour la génération de vecteurs aléatoires."""
+
+    def test_longueur(self) -> None:
+        vec = rand_vector(7)
+        assert len(vec) == 7
+
+    def test_type_elements(self) -> None:
+        vec = rand_vector(5)
+        assert all(isinstance(v, float) for v in vec)
+
+    def test_reproductibilite(self) -> None:
+        random.seed(123)
+        v1 = rand_vector(10)
+        random.seed(123)
+        v2 = rand_vector(10)
+        assert v1 == v2
+
+    def test_scale_affecte_amplitude(self) -> None:
+        random.seed(42)
+        small = rand_vector(200, scale=0.01)
+        random.seed(42)
+        big = rand_vector(200, scale=10.0)
+        max_small = max(abs(v) for v in small)
+        max_big = max(abs(v) for v in big)
+        assert max_big > max_small * 10
+
+    def test_taille_zero(self) -> None:
+        vec = rand_vector(0)
+        assert vec == []
+
+    def test_taille_un(self) -> None:
+        vec = rand_vector(1)
+        assert len(vec) == 1
+        assert isinstance(vec[0], float)
+
+    def test_valeurs_centrees_autour_de_zero(self) -> None:
+        random.seed(42)
+        vec = rand_vector(1000, scale=1.0)
+        mean = sum(vec) / len(vec)
+        assert abs(mean) < 0.2  # moyenne proche de 0 pour N grand
 
 
 # ---------------------------------------------------------------------------

@@ -48,6 +48,19 @@ def rand_matrix(rows: int, cols: int, scale: float = 0.3) -> list[list[float]]:
     return [[random.gauss(0, scale) for _ in range(cols)] for _ in range(rows)]
 
 
+def rand_vector(size: int, scale: float = 0.3) -> list[float]:
+    """Génère un vecteur aléatoire gaussien.
+
+    Args:
+        size: Nombre d'éléments dans le vecteur.
+        scale: Écart-type de la distribution gaussienne.
+
+    Returns:
+        Liste de flottants tirés de N(0, scale).
+    """
+    return [random.gauss(0, scale) for _ in range(size)]
+
+
 # ---------------------------------------------------------------------------
 # Softmax sur dictionnaire (notebook 2)
 # ---------------------------------------------------------------------------
