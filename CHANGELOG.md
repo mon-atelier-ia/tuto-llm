@@ -4,6 +4,42 @@ Toutes les modifications notables de ce projet sont documentées ici.
 Format basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/),
 versionné selon [Conventional Commits](https://www.conventionalcommits.org/fr/).
 
+## [1.2.0] - 2026-02-21
+
+Intégration de 3 datasets, pipeline reproductible, documentation exhaustive,
+et module de chargement/formatage pour l'entraînement du mini-LLM.
+
+### Added
+
+- **`data/prenoms.txt`** : ~30 800 prénoms INSEE nettoyés (lowercase, sans
+  accents, a-z, min 2 chars). Source : INSEE fichier des prénoms depuis 1900.
+- **`data/dinosaures.txt`** : ~1 524 noms de dinosaures nettoyés. Source :
+  gist Dvelezs94. Inspiré du cours makemore de Karpathy.
+- **`data/haiku.csv`** : 1 000 haiku (échantillon, licence incertaine).
+  Stocké pour usage futur, nécessite vocab étendu.
+- **`src/tuto_llm/data.py`** : Module utilitaire avec `charger_dataset`,
+  `charger_csv`, `nettoyer_mot`, `valider_vocab` (avec `min_len`),
+  `formater_training` (type hints, docstrings Google style).
+- **`tests/test_data.py`** : 46 tests (21 unitaires + 12 intégration
+  prénoms/dinosaures + 3 intégration haiku + 4 CSV + 4 formatage + 2 min_len).
+- **`docs/DATASETS.md`** : Référence complète des datasets intégrés,
+  compatibles char-level, et autres concepts ML (12 datasets documentés).
+- **`scripts/build_datasets.py`** : Pipeline reproductible de téléchargement
+  et nettoyage des 3 datasets (dinosaures, prénoms, haiku).
+
+### Metrics
+
+| Métrique | Valeur |
+|----------|--------|
+| Tests | 88 pass (42 core + 46 data) |
+| Couverture src/ | 100% (seuil : 70%) |
+| Erreurs ruff | 0 |
+| Erreurs mypy | 0 |
+| Datasets intégrés | 3 (prenoms, dinosaures, haiku) |
+| Datasets documentés | 12 |
+
+---
+
 ## [1.1.0] - 2026-02-21
 
 Cohérence du projet : extraction complète des fonctions, CI/CD,
@@ -123,6 +159,9 @@ sans infrastructure à un projet conforme aux normes ISO 5055, 25010,
   9 tests unitaires (v1.1.0).
 - [x] **CI/CD** : workflow GitHub Actions avec 6 jobs parallèles,
   actions pinnées sur SHA, notebook smoke tests inclus (v1.1.0).
+- [x] **Datasets d'entraînement** : 3 datasets intégrés (prénoms,
+  dinosaures, haiku), pipeline reproductible, 46 tests, documentation
+  exhaustive de 12 datasets (v1.2.0).
 - [ ] **nbval** : mentionné dans le plan initial mais non installé.
   Les smoke tests via nbconvert suffisent pour le moment. nbval pourrait
   être ajouté pour valider les outputs attendus des cellules.
