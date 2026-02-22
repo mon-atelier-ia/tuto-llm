@@ -31,3 +31,6 @@ htmlcov/
 # Linting & Type checking (ISO 5055)
 .mypy_cache/
 .ruff_cache/
+
+# Fichiers intermédiaires notebooks (générés par exécution)
+data/nb*.json
