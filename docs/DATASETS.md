@@ -69,16 +69,16 @@ sans vérification préalable des droits.
 espaces, ponctuation). Pourrait servir pour un notebook avancé sur
 la génération de texte libre.
 
-### 4. Pokémon (noms anglais)
+### 4. Pokémon (noms français)
 
 | Champ | Valeur |
 |-------|--------|
 | Fichier | `data/pokemon.txt` |
-| Source | [PokéAPI](https://pokeapi.co/) |
+| Source | [PokéAPI](https://pokeapi.co/) — endpoint `pokemon-species/{id}` |
 | Licence | **Noms (c) Nintendo / Creatures Inc. / GAME FREAK inc.** (voir note) |
-| Taille | 1 009 noms de base uniques |
+| Taille | ~1 023 noms français uniques |
 | Format | Un nom par ligne, trié alphabétiquement |
-| Nettoyage | Noms de base uniquement (avant le premier tiret), lowercase, filtré a-z, min 2 chars |
+| Nettoyage | Noms français via `names[language.name == "fr"]`, lowercase, accents supprimés (NFKD), filtré a-z, min 3 chars |
 | Compatible vocab | Oui |
 
 **Note copyright** : Les noms Pokémon sont des marques déposées de
@@ -86,9 +86,24 @@ Nintendo / Creatures Inc. / GAME FREAK inc. Le fichier est inclus
 dans ce projet à des fins strictement éducatives et non commerciales.
 Il ne doit pas être redistribué dans un contexte commercial.
 
-**Usage** : Dataset alternatif engageant pour le public cible (10-14 ans).
-Noms inventés avec des patterns reconnaissables (suffixes, sonorités).
-Longueur moyenne 7.5 caractères, compatible avec CONTEXT=8.
+**Usage** : Dataset principal engageant pour le public cible (10-14 ans).
+Noms français reconnaissables (pikachu, dracaufeu, ronflex, evoli,
+ectoplasma). Compatible avec CONTEXT=8.
+
+### 5. Pokémon (noms anglais)
+
+| Champ | Valeur |
+|-------|--------|
+| Fichier | `data/pokemon_eng.txt` |
+| Source | [PokéAPI](https://pokeapi.co/) — endpoint `pokemon?limit=2000` |
+| Licence | **Noms (c) Nintendo / Creatures Inc. / GAME FREAK inc.** (voir note copyright ci-dessus) |
+| Taille | 1 009 noms de base uniques |
+| Format | Un nom par ligne, trié alphabétiquement |
+| Nettoyage | Noms de base uniquement (avant le premier tiret), lowercase, filtré a-z, min 2 chars |
+| Compatible vocab | Oui |
+
+**Usage** : Dataset de référence anglais. Conservé pour comparaison
+et usage futur (ex: notebook bilingue).
 
 ---
 
@@ -198,7 +213,7 @@ des concepts ML intéressants pour de futurs notebooks.
 
 ## Audit qualité des données
 
-Audit réalisé le 2026-02-21 sur les 3 datasets intégrés.
+Audit réalisé le 2026-02-23 sur les 4 datasets intégrés.
 
 ### Prénoms (30 806 entrées)
 
@@ -248,6 +263,31 @@ line3 15.2. Haiku complet moyen : 49.3 chars, max 79.
 
 **Verdict** : dataset **non prêt** pour l'entraînement. Stocké comme
 référence pour un usage futur après correction des 3 findings majeurs.
+
+### Pokémon FR (1 023 entrées)
+
+**Distribution des longueurs** : min 3, max 12, moyenne 8.2 caractères.
+Pic de distribution à 8-9 caractères. Les 26 lettres initiales a-z
+sont toutes représentées.
+
+**Pattern dominant** : Noms inventés avec sonorités distinctives.
+Suffixes fréquents (-ali, -ard, -eur). Distribution régulière,
+pas de biais morphologique dominant comme les dinosaures.
+
+| Finding | Sévérité | Détail | Action |
+|---------|----------|--------|--------|
+| F-K1 : 3 noms de 3 chars | Info | Artefacts courts après nettoyage des accents et tirets. 0.3% du dataset. | Aucune. Filtrés par `MIN_POKEMON_FR_LEN=3`. |
+| F-K2 : noms FR/EN identiques | Info | ~40% des noms sont identiques en FR et EN (pikachu, lucario, etc.). | Aucune. Distribution réelle des traductions officielles. |
+
+**Verdict** : dataset propre, prêt pour l'entraînement.
+
+### Pokémon ENG (1 009 entrées)
+
+Même source (PokéAPI), endpoint différent (`pokemon?limit=2000`).
+Noms de base extraits avant le premier tiret. Min 2 chars.
+Distribution et qualité similaires au dataset FR.
+
+**Verdict** : dataset propre, conservé comme référence.
 
 ---
 
