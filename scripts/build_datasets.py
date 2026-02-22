@@ -12,12 +12,14 @@ Sources:
     - Prénoms INSEE : https://www.insee.fr/fr/statistiques/7633685
     - Dinosaures    : https://gist.github.com/Dvelezs94/24bfcc8ab6042613ab5d94275e2e395a
     - Haiku         : https://github.com/docmarionum1/haikurnn
+    - Pokémon       : https://pokeapi.co/ (noms de base uniquement)
 """
 
 from __future__ import annotations
 
 import csv
 import io
+import json
 import unicodedata
 import urllib.request
 import zipfile
@@ -42,7 +44,10 @@ HAIKU_URL = (
     "haikurnn/master/input/poems/haikus.csv"
 )
 
+POKEAPI_URL = "https://pokeapi.co/api/v2/pokemon?limit=2000"
+
 MIN_PRENOM_LEN = 2  # Exclure les prénoms d'un seul caractère (bruit)
+MIN_POKEMON_LEN = 2  # Exclure les noms d'un seul caractère
 HAIKU_SAMPLE_SIZE = 1000
 
 
@@ -63,10 +68,13 @@ def clean_word(word: str) -> str:
     return "".join(c for c in cleaned if "a" <= c <= "z")
 
 
-def download(url: str) -> bytes:
+def download(url: str, user_agent: str | None = None) -> bytes:
     """Télécharge une URL et retourne le contenu brut."""
     print(f"  Téléchargement : {url[:80]}...")
-    with urllib.request.urlopen(url) as resp:  # noqa: S310
+    req = urllib.request.Request(url)  # noqa: S310
+    if user_agent:
+        req.add_header("User-Agent", user_agent)
+    with urllib.request.urlopen(req) as resp:  # noqa: S310
         return resp.read()
 
 
@@ -77,7 +85,7 @@ def download(url: str) -> bytes:
 
 def build_dinosaures() -> None:
     """Télécharge et nettoie le dataset de dinosaures."""
-    print("\n[1/3] Dinosaures")
+    print("\n[1/4] Dinosaures")
     raw = download(DINOS_URL).decode("utf-8")
 
     dinos: set[str] = set()
@@ -96,7 +104,7 @@ def build_dinosaures() -> None:
 
 def build_prenoms() -> None:
     """Télécharge et nettoie le dataset de prénoms INSEE."""
-    print("\n[2/3] Prénoms INSEE")
+    print("\n[2/4] Prénoms INSEE")
     zip_data = download(PRENOMS_URL)
 
     with zipfile.ZipFile(io.BytesIO(zip_data)) as zf:
@@ -129,9 +137,37 @@ def build_prenoms() -> None:
     print(f"  -> {output} : {len(prenoms)} prénoms (min_len={MIN_PRENOM_LEN})")
 
 
+def build_pokemon() -> None:
+    """Télécharge les noms de base des Pokémon depuis PokéAPI."""
+    print("\n[4/4] Pokémon")
+    raw = download(POKEAPI_URL, user_agent="TutoLLM/1.0")
+    data = json.loads(raw)
+
+    noms: set[str] = set()
+    for entry in data["results"]:
+        # Nom de base uniquement (avant le premier tiret).
+        # Ex: "charizard-mega-x" -> "charizard"
+        base = entry["name"].split("-")[0]
+        cleaned = clean_word(base)
+        if (
+            cleaned
+            and cleaned.isalpha()
+            and cleaned.isascii()
+            and len(cleaned) >= MIN_POKEMON_LEN
+        ):
+            noms.add(cleaned)
+
+    output = DATA_DIR / "pokemon.txt"
+    output.write_text(
+        "\n".join(sorted(noms)) + "\n",
+        encoding="utf-8",
+    )
+    print(f"  -> {output} : {len(noms)} noms")
+
+
 def build_haiku() -> None:
     """Télécharge un échantillon de haiku."""
-    print("\n[3/3] Haiku")
+    print("\n[3/4] Haiku")
     raw = download(HAIKU_URL).decode("utf-8")
 
     reader = csv.reader(io.StringIO(raw))
@@ -166,6 +202,7 @@ def main() -> None:
     build_dinosaures()
     build_prenoms()
     build_haiku()
+    build_pokemon()
 
     print("\nTerminé. Fichiers générés :")
     for f in sorted(DATA_DIR.iterdir()):

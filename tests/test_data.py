@@ -238,6 +238,38 @@ class TestIntegrationDinosaures:
         assert valider_vocab(dinos) == dinos
 
 
+class TestIntegrationPokemon:
+    """Tests d'intégration chargeant data/pokemon.txt."""
+
+    @pytest.fixture()
+    def pokemon(self) -> list[str]:
+        return charger_dataset("data/pokemon.txt")
+
+    def test_fichier_existe_et_non_vide(self, pokemon: list[str]) -> None:
+        assert len(pokemon) > 900
+
+    def test_tous_pure_az(self, pokemon: list[str]) -> None:
+        for mot in pokemon:
+            assert mot.isalpha() and mot.isascii() and mot.islower(), f"invalide: {mot}"
+
+    def test_pas_de_doublons(self, pokemon: list[str]) -> None:
+        assert len(pokemon) == len(set(pokemon))
+
+    def test_trie_alphabetiquement(self, pokemon: list[str]) -> None:
+        assert pokemon == sorted(pokemon)
+
+    def test_pas_de_mot_un_char(self, pokemon: list[str]) -> None:
+        singles = [m for m in pokemon if len(m) == 1]
+        assert singles == [], f"Pokémon 1 char trouvés : {singles}"
+
+    def test_100pct_valides_vocab(self, pokemon: list[str]) -> None:
+        assert valider_vocab(pokemon) == pokemon
+
+    def test_formater_training(self, pokemon: list[str]) -> None:
+        formatted = formater_training(pokemon[:3])
+        assert all(m.startswith(".") and m.endswith(".") for m in formatted)
+
+
 class TestIntegrationHaiku:
     """Tests d'intégration chargeant data/haiku.csv."""
 
