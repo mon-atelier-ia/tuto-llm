@@ -1,5 +1,8 @@
 # Tuto LLM - Créer son mini-LLM (pour les 10-14 ans)
 
+[![Ouvrir dans JupyterLite](https://img.shields.io/badge/Ouvrir-JupyterLite-blue?logo=jupyter)](https://mon-atelier-ia.github.io/tuto-llm/)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mon-atelier-ia/tuto-llm/blob/master/notebooks/01_deviner_la_suite.ipynb)
+
 > Cours progressif pour comprendre et construire un modèle de langage,
 > inspiré de [microgpt.py](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95) d'Andrej Karpathy.
 

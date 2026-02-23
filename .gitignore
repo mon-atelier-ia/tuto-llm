@@ -34,3 +34,6 @@ htmlcov/
 
 # Fichiers intermédiaires notebooks (générés par exécution)
 data/nb*.json
+
+# JupyterLite build output
+_output/
