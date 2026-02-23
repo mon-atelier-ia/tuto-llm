@@ -36,7 +36,8 @@ Ce projet suit des normes ISO strictes adaptées au contexte éducatif.
 
 - **Couverture** : >= 70% sur `src/`
 - **Tests unitaires** : `pytest tests/test_core.py tests/test_data.py tests/test_training.py` (124 tests)
-- **Smoke tests** : `pytest tests/test_notebooks.py -m slow`
+- **Smoke tests** : `pytest tests/test_notebooks.py -m slow` (6 tests)
+- **Tests output** : `pytest tests/test_notebook_outputs.py -m slow` (24 tests : validations, visualisations, compteurs)
 - Commande complète : `pytest tests/ --cov=src --cov-fail-under=70`
 
 ### ISO 27001 — Sécurité

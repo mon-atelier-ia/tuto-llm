@@ -36,11 +36,12 @@ src/tuto_llm/       # Fonctions extraites pour tests unitaires
   data.py           # charger_dataset, charger_csv, nettoyer_mot, valider_vocab, formater_training
   training.py       # forward_with_cache, backward_llm, cross_entropy_loss, calcul_loss
   vocab.py          # VOCAB, char_to_id, id_to_char
-tests/              # Tests unitaires + smoke tests notebooks
+tests/              # 154 tests (124 unitaires + 6 smoke + 24 output)
   test_core.py      # 42 tests sur les fonctions extraites
   test_data.py      # 62 tests (unitaires + intégration données)
   test_training.py  # 20 tests (unitaires + vérification numérique gradients)
   test_notebooks.py # Exécution des 6 notebooks (marqués slow)
+  test_notebook_outputs.py # 24 tests ISO 29119 : validations, visualisations, compteurs
 scripts/            # Scripts utilitaires
   build_datasets.py # Pipeline reproductible de construction des datasets
 docs/               # Documentation ISO et gouvernance IA

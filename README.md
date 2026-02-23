@@ -232,7 +232,7 @@ data/                   # Datasets pour entraînement
   pokemon.txt           # ~1 023 noms Pokémon FR ((c) Nintendo, usage éducatif)
   pokemon_eng.txt       # ~1 009 noms Pokémon ENG (référence)
   haiku.csv             # 1 000 haiku (usage futur, vocab étendu requis)
-tests/                  # 124 tests (42 core + 62 data + 20 training), coverage 100%
+tests/                  # 154 tests (124 unitaires + 6 smoke + 24 output), coverage 100%
 scripts/build_datasets.py  # Pipeline reproductible de construction des datasets
 docs/                   # Documentation ISO et gouvernance IA
   DATASETS.md           # Référence complète : 12 datasets documentés, audit qualité
@@ -279,7 +279,7 @@ Lancer tous les contrôles : `pre-commit run --all-files`
 
 - 6 notebooks complets (probabilités, loss, embeddings, attention, LLM, entraînement)
 - 18 exercices interactifs (4+3+3+2+3+3), rappel Jupyter, séparateurs visuels
-- 124 tests, 100% coverage sur `src/`
+- 154 tests (124 unitaires + 6 smoke + 24 output), 100% coverage sur `src/`
 - 5 datasets intégrés, pipeline reproductible
 - CI GitHub Actions (6 jobs parallèles)
 - Pre-commit hooks (13 hooks, 3 stages)

@@ -48,7 +48,8 @@ et leur implémentation concrète.
 
 **Implémentation** :
 - Tests unitaires sur `src/tuto_llm/` (124 tests : 42 core + 62 data + 20 training)
-- Smoke tests sur les 6 notebooks (exécution complète)
+- Smoke tests sur les 6 notebooks (exécution complète, 6 tests)
+- Tests output ISO 29119 sur les 6 notebooks (24 tests : validations, visualisations, compteurs)
 - Couverture minimale : **70%** sur `src/` (100% atteint)
 - Proportionné au contexte éducatif (vs 80% pour pocket_arbiter)
 
