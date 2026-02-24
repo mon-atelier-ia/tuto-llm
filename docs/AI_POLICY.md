@@ -70,7 +70,9 @@ Les notebooks suivent des conventions documentées dans
 (Capytale, EPFL, jupyter4edu, Callysto, ML for Kids, Kaggle Learn).
 
 Contrôles appliqués :
-- 18 exercices interactifs (4+3+3+2+3+3) avec variables modifiables
+- 18 exercices interactifs (4+3+3+2+3+3) avec bannières HTML `exercice()`
+- Bannière verte avec titre, consigne et "Ce que tu vas voir"
+- Délimiteurs `# ==== MODIFIE ICI ====` dans les cellules exercice
 - Règle Callysto : max 4 cellules entre exercices
 - Scaffolding progressif (niveaux 1 à 5)
 - Rappel Jupyter + séparateurs visuels dans chaque notebook
@@ -82,3 +84,4 @@ Contrôles appliqués :
 3. La revue de contenu vérifie les citations contre les sources
 4. Tout nouveau contenu technique nécessite une source vérifiable
 5. Audit pédagogique : conformité Callysto, exercices, séparateurs
+6. Vérification bannières : `grep -c "exercice(" notebooks/*.ipynb` → 4,3,3,2,3,3

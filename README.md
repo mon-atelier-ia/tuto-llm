@@ -275,10 +275,11 @@ Le projet applique 6 normes ISO adaptées au contexte éducatif :
 
 Lancer tous les contrôles : `pre-commit run --all-files`
 
-## Etat du projet (v1.5.0)
+## Etat du projet (v1.6.0)
 
 - 6 notebooks complets (probabilités, loss, embeddings, attention, LLM, entraînement)
-- 18 exercices interactifs (4+3+3+2+3+3), rappel Jupyter, séparateurs visuels
+- 18 exercices interactifs (4+3+3+2+3+3) avec bannières HTML `exercice()`
+- Délimiteurs `# ==== MODIFIE ICI ====` et observation "Ce que tu vas voir"
 - 154 tests (124 unitaires + 6 smoke + 24 output), 100% coverage sur `src/`
 - 5 datasets intégrés, pipeline reproductible
 - CI GitHub Actions (6 jobs parallèles)

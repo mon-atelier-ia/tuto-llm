@@ -95,8 +95,10 @@ et leur implémentation concrète.
 - Pratiques pédagogiques documentées dans `docs/PEDAGOGICAL_PRACTICES.md`
   (7 sources de référence : Capytale, EPFL, jupyter4edu, Callysto, etc.)
 
-**Contrôle pédagogique** (v1.5.0) :
+**Contrôle pédagogique** (v1.6.0) :
 - 18 exercices interactifs répartis sur 6 notebooks (4+3+3+2+3+3)
+- Bannières HTML `exercice()` avec titre, consigne et "Ce que tu vas voir"
+- Délimiteurs `# ==== MODIFIE ICI ====` dans les cellules exercice
 - Règle Callysto : max 4 cellules entre exercices (attention 10-14 ans)
 - Scaffolding 5 niveaux : Exécuter → Observer → Modifier → Compléter → Créer
 - Rappel Jupyter en tête de chaque notebook, séparateurs visuels `---`
@@ -107,4 +109,4 @@ et leur implémentation concrète.
 - [3Blue1Brown - Neural Networks](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
 - [PokéAPI](https://pokeapi.co/) — (c) Nintendo / Creatures Inc. / GAME FREAK inc.
 
-**Vérification** : Revue manuelle des notebooks + `grep -c "A toi de jouer" notebooks/*.ipynb`
+**Vérification** : Revue manuelle des notebooks + `grep -c "exercice(" notebooks/*.ipynb`

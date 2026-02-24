@@ -4,7 +4,7 @@
 |-------|--------|
 | **Projet** | Tuto LLM -- Creer son mini-LLM (10-14 ans) |
 | **Norme** | ISO/IEC 42001:2023 (Gouvernance IA) |
-| **Version** | v1.5.0 |
+| **Version** | v1.6.0 |
 | **Date** | 2026-02-23 |
 | **Auteur** | Recherche documentaire assistee par Claude (Anthropic) |
 | **Statut** | Actif -- mis a jour a chaque evolution pedagogique |
@@ -44,7 +44,7 @@ Voir Section 4 pour les justifications des rejets.
    - 5.3 Cadre institutionnel francais
    - 5.4 Ressources pedagogiques complementaires
 6. [Positionnement unique de Tuto LLM](#6-positionnement-unique-de-tuto-llm)
-7. [Projets utiles pour la phase actuelle (v1.5.0)](#7-projets-utiles-pour-ameliorer-la-phase-actuelle-v150)
+7. [Projets utiles pour la phase actuelle (v1.6.0)](#7-projets-utiles-pour-ameliorer-la-phase-actuelle-v160)
    - 7.1 Visualisation sans dependances
    - 7.2 Validation des exercices
    - 7.3 Gamification legere
@@ -202,11 +202,11 @@ basee sur l'analyse des sources ci-dessus.
 [Cellule 2]  Code de demonstration
              L'eleve execute, observe le resultat
 
-[Cellule 3]  Exercice explicite (markdown)
-             "A toi de jouer ! (Exercice N)"
-
-[Cellule 4]  Cellule code vide/editable
-             "# --- EXERCICE N : Ecris ton code ici ---"
+[Cellule 3]  Cellule code exercice (banniere + code editable)
+             exercice(N, "Titre", "Consigne", "Ce que tu vas voir")
+             # ==== MODIFIE ICI ====
+             variable = valeur
+             # ======================
 
   ... (repetition du cycle demonstration/exercice) ...
 
@@ -223,9 +223,9 @@ basee sur l'analyse des sources ci-dessus.
 |-------|---------------|--------|
 | **Cellule d'accueil** avec mode d'emploi Jupyter | L'eleve n'a peut-etre jamais vu un notebook | jupyter4edu "Shift-Enter for the Win" |
 | **Separateurs `---`** entre sections | Repere visuel dans le flot de cellules | Callysto, Capytale |
-| **"A toi de jouer !"** en titre d'exercice | Marqueur explicite, pas de confusion cours/exercice | Capytale, EPFL "Resolution de problemes" |
-| **Cellules code vides** pour les exercices | L'eleve sait ou ecrire | jupyter4edu "Fill in the Blanks" |
-| **Commentaire `# <-- Change cette valeur !`** | Guide l'oeil vers le point d'action | jupyter4edu "Tweak Twiddle Frob" |
+| **Banniere `exercice()`** en debut de cellule code | Marqueur visuel fort (vert #4CAF50), pas de confusion cours/exercice | Capytale, EPFL "Resolution de problemes" |
+| **"Ce que tu vas voir"** dans la banniere | L'eleve sait le resultat attendu AVANT execution | EPFL "Objectifs visibles", jupyter4edu "Target Practice" |
+| **`# ==== MODIFIE ICI ====`** autour du code editable | Delimiteur visuel fort, guide l'oeil vers la zone d'action | jupyter4edu "Tweak Twiddle Frob", nbgrader-inspired |
 | **`print()` apres chaque etape** | Feedback visuel immediat | EPFL "Feedback immediat", py-edu-fr |
 | **Variables en francais** | Public francophone de 10-14 ans | py-edu-fr |
 | **Analogie avant le code** | Ancrage dans le concret | ML for Kids, EPFL "Progression" |
@@ -259,14 +259,6 @@ Les notebooks 04-06 atteignent le niveau 5 pour certains exercices.
 Explication avec **mots cles en gras** et analogie.
 ```
 
-**Markdown (exercice)** :
-```markdown
----
-### A toi de jouer ! (Exercice N)
-
-Consigne claire en 1-3 lignes. Indice entre backticks : `code`.
-```
-
 **Code (demonstration)** :
 ```python
 # Execute cette cellule pour ... (Shift + Entree)
@@ -274,23 +266,21 @@ resultat = calcul()
 print(f"Le resultat est : {resultat}")
 ```
 
-**Code (exercice editable)** :
+**Code (exercice avec banniere)** :
 ```python
-# --- EXERCICE N : Ecris ton code ici, puis Shift + Entree ---
+exercice(
+    N,
+    "Titre de l'exercice",
+    "Consigne : change <code>ma_variable</code> ci-dessous.",
+    "Ce que tu vas voir : le resultat change selon la valeur.",
+)
 
-# Consigne 1 :
-
-
-# Consigne 2 :
-
-```
-
-**Code (valeur a modifier)** :
-```python
-# --- EXERCICE N : Change la valeur, puis Shift + Entree ---
-ma_variable = 10  # <-- Change cette valeur !
+# ==== MODIFIE ICI ====
+ma_variable = 10  # <-- Essaie 50 ou 100 !
+# ======================
 
 print(f"Resultat avec {ma_variable} : ...")
+verifier(N, ma_variable != 10, "Bravo !", "Change la valeur.")
 ```
 
 ---
@@ -387,7 +377,7 @@ aux eleves de comprendre le fonctionnement interne de l'IA generative.
 
 ---
 
-## 7. Projets utiles pour ameliorer la phase actuelle (v1.5.0)
+## 7. Projets utiles pour ameliorer la phase actuelle (v1.6.0)
 
 Recherche realisee le 2026-02-23. Projets et outils pouvant enrichir
 les 6 notebooks existants sans rompre la contrainte "zero dependances".
@@ -409,7 +399,7 @@ solution la plus adaptee pour Tuto LLM.
 (opacite CSS proportionnelle aux poids) via `display(HTML(...))`. Pour
 27 tokens et des matrices 8x8, le HTML est plus lisible que matplotlib.
 
-**Etat d'implementation (v1.5.0)** : 16 visualisations HTML implementees
+**Etat d'implementation (v1.6.0)** : 16 visualisations HTML implementees
 via 7 fonctions `afficher_*` uniques (12 definitions dans les notebooks) :
 
 | Fonction | Notebooks | Appels | Description |
