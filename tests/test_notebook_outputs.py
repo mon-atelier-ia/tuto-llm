@@ -43,7 +43,7 @@ EXPECTED_VIZ_COUNT = {
     "02_apprendre_des_erreurs.ipynb": 1,  # evolution_loss
     "03_la_memoire_du_modele.ipynb": 2,  # embeddings + barres
     "04_lattention.ipynb": 4,  # attention x2 + masque_causal x2
-    "05_mon_premier_llm.ipynb": 5,  # architecture + barres x2 + attention x2
+    "05_mon_premier_llm.ipynb": 7,  # architecture + barres x2 + attention x2 + temperature + generation
     "06_entrainer_le_modele.ipynb": 2,  # evolution_loss + barres
 }
 
