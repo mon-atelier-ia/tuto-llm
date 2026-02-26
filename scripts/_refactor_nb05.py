@@ -363,11 +363,14 @@ cells.append(
         "\n"
         "# \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n"
         "\n"
+        "# Le MLP fait toujours 2x la taille des embeddings\n"
         "HIDDEN_DIM_test = EMBED_DIM_test * 2\n"
+        "# Compter tous les parametres (comme dans la cellule config)\n"
+        "# Formule : embeddings + attention + MLP + sortie\n"
         "nb_params_test = (\n"
-        "    VOCAB_SIZE * EMBED_DIM_test\n"
-        "    + CONTEXT * EMBED_DIM_test\n"
-        "    + 3 * EMBED_DIM_test * EMBED_DIM_test\n"
+        "    VOCAB_SIZE * EMBED_DIM_test        # embeddings des lettres\n"
+        "    + CONTEXT * EMBED_DIM_test          # embeddings de position\n"
+        "    + 3 * EMBED_DIM_test * EMBED_DIM_test  # Wq + Wk + Wv (attention)\n"
         "    + EMBED_DIM_test * HIDDEN_DIM_test\n"
         "    + HIDDEN_DIM_test\n"
         "    + HIDDEN_DIM_test * EMBED_DIM_test\n"
@@ -410,6 +413,7 @@ cells.append(
 # ----------------------------------------------------------------
 cells.append(
     code(
+        "# Nombres aleatoires : le point de depart de tout reseau de neurones\n"
         "def rand_matrix(rows, cols, scale=0.3):\n"
         '    """Cree une matrice aleatoire."""\n'
         "    return [[random.gauss(0, scale) for _ in range(cols)] for _ in range(rows)]\n"
@@ -426,6 +430,7 @@ cells.append(
         "    return [sum(mat[i][j] * vec[j] for j in range(len(vec))) for i in range(len(mat))]\n"
         "\n"
         "\n"
+        "# vec_add : additionner deux listes de nombres element par element\n"
         "def vec_add(a, b):\n"
         '    """Addition de deux vecteurs."""\n'
         "    return [x + y for x, y in zip(a, b, strict=False)]\n"
@@ -652,15 +657,17 @@ cells.append(
         "\n"
         "    # 2. Self-Attention (sur la derniere position)\n"
         "    q = mat_vec(Wq, hidden[-1])\n"
+        "    # Calculer scores d'attention : qui est compatible avec la query ?\n"
         "    scores = []\n"
         "    values = []\n"
         "    for i in range(n):\n"
-        "        k = mat_vec(Wk, hidden[i])\n"
-        "        v = mat_vec(Wv, hidden[i])\n"
+        "        k = mat_vec(Wk, hidden[i])  # cle de la position i\n"
+        "        v = mat_vec(Wv, hidden[i])  # valeur de la position i\n"
         "        score = sum(q[d] * k[d] for d in range(EMBED_DIM)) / math.sqrt(EMBED_DIM)\n"
         "        scores.append(score)\n"
         "        values.append(v)\n"
-        "    attn_weights = softmax(scores)\n"
+        "    attn_weights = softmax(scores)  # scores -> probabilites\n"
+        "    # Somme ponderee : collecter l'info des positions importantes\n"
         "    attn_out = [0.0] * EMBED_DIM\n"
         "    for i in range(n):\n"
         "        for d in range(EMBED_DIM):\n"
@@ -722,8 +729,9 @@ cells.append(
         "\n"
         "# \u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d\n"
         "\n"
-        "test_ids = [char_to_id[c] for c in mon_debut]\n"
-        "probas = forward_llm(test_ids)\n"
+        "test_ids = [char_to_id[c] for c in mon_debut]  # lettres -> numeros\n"
+        "probas = forward_llm(test_ids)  # le modele predit la lettre suivante\n"
+        "# Garder les 5 lettres les plus probables\n"
         "top5 = sorted(range(VOCAB_SIZE), key=lambda i: -probas[i])[:5]\n"
         "\n"
         "print(f\"Predictions apres '{mon_debut}' :\")\n"
@@ -770,6 +778,7 @@ cells.append(
 # ----------------------------------------------------------------
 cells.append(
     code(
+        "# 20 Pokemon pour tester le modele (l'entrainement reel = lecon 6)\n"
         "pokemons = [\n"
         '    "arcanin", "bulbizarre", "carapuce", "dracaufeu", "ectoplasma",\n'
         '    "evoli", "felinferno", "gardevoir", "goupix", "lokhlass",\n'
@@ -778,17 +787,19 @@ cells.append(
         "]\n"
         "\n"
         "\n"
+        "# La loss mesure a quel point le modele se trompe\n"
         "def calcul_loss(pokemons):\n"
         '    """Calcule la loss moyenne sur tous les Pokemon."""\n'
         "    loss_totale = 0\n"
         "    nb = 0\n"
         "    for pokemon in pokemons:\n"
+        "        # '.pikachu.' -> le modele doit predire chaque lettre\n"
         '        mot = "." + pokemon + "."\n'
         "        ids = [char_to_id[c] for c in mot]\n"
         "        for i in range(1, len(ids)):\n"
         "            seq = ids[:i]\n"
         "            cible = ids[i]  # la bonne reponse\n"
-        "            probas = forward_llm(seq[-CONTEXT:])\n"
+        "            probas = forward_llm(seq[-CONTEXT:])  # fenetre de contexte\n"
         "            # -log(proba) : si le modele est sur -> petite loss, incertain -> grande loss\n"
         "            loss_totale += -math.log(probas[cible] + 1e-10)\n"
         "            nb += 1\n"
@@ -825,7 +836,7 @@ cells.append(
         "# Generer un nom lettre par lettre, comme ChatGPT genere mot par mot\n"
         'def generer_llm(debut=".", temperature=1.0, max_len=15):\n'
         '    """Genere un nom de Pokemon lettre par lettre."""\n'
-        "    ids = [char_to_id[c] for c in debut]\n"
+        "    ids = [char_to_id[c] for c in debut]  # convertir les lettres en numeros\n"
         "    resultat = debut\n"
         "    for _ in range(max_len):\n"
         "        probas = forward_llm(ids[-CONTEXT:])  # predire la prochaine lettre\n"
@@ -833,9 +844,10 @@ cells.append(
         "        if temperature != 1.0:\n"
         "            logits = [math.log(p + 1e-10) / temperature for p in probas]\n"
         "            probas = softmax(logits)\n"
+        "        # Tirer au sort une lettre selon les probabilites\n"
         "        idx = random.choices(range(VOCAB_SIZE), weights=probas, k=1)[0]\n"
         '        if idx == char_to_id["."]:\n'
-        "            break\n"
+        "            break  # le point = fin du nom\n"
         "        ids.append(idx)\n"
         "        resultat += id_to_char[idx]\n"
         '    return resultat[1:] if resultat.startswith(".") else resultat\n'
@@ -878,6 +890,7 @@ cells.append(
 cells.append(
     code(
         "# Calcul des probas pour le slider interactif\n"
+        "# Predictions du modele apres '.pik' (pas encore entraine)\n"
         '_probas_temp = forward_llm([char_to_id[c] for c in ".pik"])\n'
         "_top_idx = sorted(range(VOCAB_SIZE), key=lambda i: -_probas_temp[i])[:10]\n"
         "afficher_temperature(\n"
@@ -915,6 +928,7 @@ cells.append(
         "\n"
         'print(f"Generation avec temperature = {ma_temperature} :")\n'
         "print()\n"
+        "# Generer 10 noms avec cette temperature\n"
         "for _ in range(10):\n"
         "    nom = generer_llm(temperature=ma_temperature).capitalize()\n"
         '    print(f"  {nom}")\n'
