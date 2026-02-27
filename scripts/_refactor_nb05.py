@@ -29,12 +29,18 @@ def code(source):
 with open("notebooks/05_mon_premier_llm.ipynb", encoding="utf-8") as f:
     nb = json.load(f)
 
-# Extract original cell-1 source (verifier + exercice + afficher_architecture)
-original_cell1 = "".join(
-    nb["cells"][1]["source"]
-    if isinstance(nb["cells"][1]["source"], list)
-    else [nb["cells"][1]["source"]]
-)
+# Find infra code cell dynamically (not hardcoded index -- Vocabulaire may shift it)
+original_cell1 = ""
+for _cell in nb["cells"]:
+    if _cell["cell_type"] == "code":
+        _src = (
+            "".join(_cell["source"])
+            if isinstance(_cell["source"], list)
+            else _cell["source"]
+        )
+        if "def verifier" in _src:
+            original_cell1 = _src
+            break
 
 verifier_match = re.search(
     r"(def verifier\(.*?\n(?:(?:    .*|)\n)*)", original_cell1, re.MULTILINE
@@ -104,7 +110,7 @@ cells.append(
 # ----------------------------------------------------------------
 infra = (
     "# ============================================================\n"
-    "# Cellule d'initialisation \\u2014 execute sans lire (Shift+Entree)\n"
+    "# Cellule d'initialisation \\u2014 outils et fonctions utilitaires\n"
     "# ============================================================\n"
     "\n"
     "import json\n"

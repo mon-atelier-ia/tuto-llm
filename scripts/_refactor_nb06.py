@@ -33,12 +33,18 @@ def code(source):
 with open("notebooks/06_entrainer_le_modele.ipynb", encoding="utf-8") as f:
     nb = json.load(f)
 
-# Extract verifier + exercice from cell 1
-original_cell1 = "".join(
-    nb["cells"][1]["source"]
-    if isinstance(nb["cells"][1]["source"], list)
-    else [nb["cells"][1]["source"]]
-)
+# Find infra code cell dynamically (not hardcoded index -- Vocabulaire may shift it)
+original_cell1 = ""
+for _cell in nb["cells"]:
+    if _cell["cell_type"] == "code":
+        _src = (
+            "".join(_cell["source"])
+            if isinstance(_cell["source"], list)
+            else _cell["source"]
+        )
+        if "def verifier" in _src:
+            original_cell1 = _src
+            break
 verifier_match = re.search(
     r"(def verifier\(.*?\n(?:(?:    .*|)\n)*)", original_cell1, re.MULTILINE
 )
@@ -48,12 +54,18 @@ exercice_match = re.search(
 verifier_code = verifier_match.group(1).rstrip("\n") if verifier_match else ""
 exercice_code = exercice_match.group(1).rstrip("\n") if exercice_match else ""
 
-# Extract Pokemon data from cell 3
-pokemon_cell = "".join(
-    nb["cells"][3]["source"]
-    if isinstance(nb["cells"][3]["source"], list)
-    else [nb["cells"][3]["source"]]
-)
+# Find Pokemon data cell dynamically (not hardcoded index)
+pokemon_cell = ""
+for _cell in nb["cells"]:
+    if _cell["cell_type"] == "code":
+        _src = (
+            "".join(_cell["source"])
+            if isinstance(_cell["source"], list)
+            else _cell["source"]
+        )
+        if "pokemons = [" in _src or "pokemons =" in _src:
+            pokemon_cell = _src
+            break
 
 cells = []
 
@@ -105,7 +117,7 @@ cells.append(
 # ================================================================
 infra = (
     "# ============================================================\n"
-    "# Cellule d'initialisation \\u2014 execute sans lire (Shift+Entree)\n"
+    "# Cellule d'initialisation \\u2014 outils et fonctions utilitaires\n"
     "# ============================================================\n"
     "\n"
     "import json\n"
@@ -290,6 +302,16 @@ cells.append(
 cells.append(code(pokemon_cell))
 
 # ================================================================
+# CELL: MD — interaction Callysto setup (NC-02)
+# ================================================================
+cells.append(
+    md(
+        "**Observe** : on a ~1 000 noms de Pokemon. C'est beaucoup plus que les 20\n"
+        "des lecons precedentes ! Le modele va voir plus d'exemples pour apprendre."
+    )
+)
+
+# ================================================================
 # CELL 4: MD — Etape 2: Preparer le modele
 # ================================================================
 cells.append(
@@ -346,6 +368,17 @@ cells.append(
         'print(f"  Attention : 3 x {EMBED_DIM} x {EMBED_DIM} = {3 * EMBED_DIM * EMBED_DIM}")\n'
         'print(f"  MLP : {HIDDEN_DIM * EMBED_DIM + HIDDEN_DIM + EMBED_DIM * HIDDEN_DIM + EMBED_DIM}")\n'
         'print(f"  Sortie : {VOCAB_SIZE} x {EMBED_DIM} = {VOCAB_SIZE * EMBED_DIM}")'
+    )
+)
+
+# ================================================================
+# CELL: MD — interaction Callysto 1 (NC-02)
+# ================================================================
+cells.append(
+    md(
+        "**Observe** : le modele a ~2 800 parametres. C'est minuscule !\n"
+        "GPT-4 en a ~1 800 **milliards** (600 millions de fois plus).\n"
+        "Mais l'algorithme d'entrainement est le meme."
     )
 )
 
@@ -517,6 +550,17 @@ cells.append(
 )
 
 # ================================================================
+# CELL: MD — interaction Callysto 2 (NC-02)
+# ================================================================
+cells.append(
+    md(
+        "**A toi** : le `forward_avec_cache` fait le meme calcul que dans la lecon 5,\n"
+        "mais il **sauvegarde chaque etape**. Pourquoi ? Parce que le backward\n"
+        "en aura besoin pour calculer les corrections !"
+    )
+)
+
+# ================================================================
 # CELL 10: MD — test loss initiale
 # ================================================================
 cells.append(
@@ -549,6 +593,17 @@ cells.append(
         'print(f"Loss initiale (poids aleatoires) : {loss_initiale:.3f}")\n'
         'print(f"Loss theorique aleatoire : {math.log(VOCAB_SIZE):.3f}")\n'
         'print(f"  -> Le modele devine au hasard parmi {VOCAB_SIZE} lettres.")'
+    )
+)
+
+# ================================================================
+# CELL: MD — interaction Callysto 3 (NC-02)
+# ================================================================
+cells.append(
+    md(
+        "**Observe** : la loss initiale est proche de 3.30. C'est logique :\n"
+        "avec 27 lettres possibles, la probabilite de chaque lettre est ~1/27,\n"
+        "et -log(1/27) = 3.30. Le modele devine **au hasard**."
     )
 )
 
@@ -843,15 +898,33 @@ cells.append(
 )
 
 # ================================================================
-# CELL 19: MD — Partie B: L'entrainement
+# CELL: MD — interaction Callysto backward (NC-02)
+# ================================================================
+cells.append(
+    md(
+        "**Observe** : le backward a 7 etapes \\u2014 une pour chaque couche du modele.\n"
+        "C'est la chaine de dominos : l'erreur de la sortie remonte couche par couche\n"
+        "jusqu'aux embeddings de depart."
+    )
+)
+
+# ================================================================
+# CELL 19a: MD — Partie B (separateur de seance)
 # ================================================================
 cells.append(
     md(
         "---\n"
         "## Partie B \\u2014 L'entrainement\n"
         "\n"
-        "*Si tu fais ce notebook en 2 seances, c'est ici que commence la 2e seance.*\n"
-        "\n"
+        "*Si tu fais ce notebook en 2 seances, c'est ici que commence la 2e seance.*"
+    )
+)
+
+# ================================================================
+# CELL 19b: MD — Etape 4: L'entrainement
+# ================================================================
+cells.append(
+    md(
         "### Etape 4 : L'entrainement\n"
         "\n"
         "C'est la meme boucle que dans les lecons 2 et 3, mais avec le vrai LLM :\n"
@@ -979,10 +1052,17 @@ cells.append(
     md(
         "**La loss a baisse !** Le modele a appris des patterns dans les noms de Pokemon.\n"
         "\n"
-        "Pendant que tu attends l'entrainement (~2 min), lis les sections ci-dessous\n"
-        "et reponds : **Quelle est la plus grande difference entre notre mini-LLM et ChatGPT ?**\n"
-        "\n"
         "---"
+    )
+)
+
+# ================================================================
+# CELL: MD — lecture active (NC-02, cellule separee)
+# ================================================================
+cells.append(
+    md(
+        "**Reflexion** : lis les sections ci-dessous et reponds :\n"
+        "**Quelle est la plus grande difference entre notre mini-LLM et ChatGPT ?**"
     )
 )
 
@@ -1068,6 +1148,19 @@ cells.append(
 )
 
 # ================================================================
+# CELL: MD — interaction Callysto "En vrai" (NC-02)
+# ================================================================
+cells.append(
+    md(
+        "**Reflexion** : notre mini-LLM s'entraine en Python pur en ~2 minutes.\n"
+        "Combien de temps prendrait l'entrainement de GPT-4 sur ton ordinateur ?\n"
+        "\n"
+        "> Indice : GPT-4 a ~600 000 fois plus de parametres, et un GPU est ~1 000 fois\n"
+        "> plus rapide que Python pur. Fais le calcul !"
+    )
+)
+
+# ================================================================
 # CELL 24: MD — Ce qu'on n'a pas implemente
 # ================================================================
 cells.append(
@@ -1116,6 +1209,16 @@ cells.append(
         "\n"
         "> **Regle d'or** : toujours verifier ce que dit une IA. Un LLM est un outil,\n"
         "> pas une source de verite."
+    )
+)
+
+# ================================================================
+# CELL: MD — interaction Callysto generation (NC-02)
+# ================================================================
+cells.append(
+    md(
+        "**A toi** : maintenant que l'entrainement est fini, voyons\n"
+        "si le modele sait generer des noms de Pokemon convaincants !"
     )
 )
 

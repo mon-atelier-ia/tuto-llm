@@ -30,12 +30,18 @@ def code(source):
 with open("notebooks/03_la_memoire_du_modele.ipynb", encoding="utf-8") as f:
     nb = json.load(f)
 
-# Extract original cell-1 source (verifier + exercice functions)
-original_cell1 = "".join(
-    nb["cells"][1]["source"]
-    if isinstance(nb["cells"][1]["source"], list)
-    else [nb["cells"][1]["source"]]
-)
+# Find infra code cell dynamically (not hardcoded index -- Vocabulaire may shift it)
+original_cell1 = ""
+for _cell in nb["cells"]:
+    if _cell["cell_type"] == "code":
+        _src = (
+            "".join(_cell["source"])
+            if isinstance(_cell["source"], list)
+            else _cell["source"]
+        )
+        if "def verifier" in _src:
+            original_cell1 = _src
+            break
 
 # Extract verifier and exercice functions via regex
 verifier_match = re.search(
@@ -98,7 +104,7 @@ cells.append(
 # ----------------------------------------------------------------
 infra = (
     "# ============================================================\n"
-    "# Cellule d'initialisation \\u2014 execute sans lire (Shift+Entree)\n"
+    "# Cellule d'initialisation \\u2014 outils et fonctions utilitaires\n"
     "# ============================================================\n"
     "\n"
     "import json\n"
@@ -524,6 +530,18 @@ cells.append(
         "    exps = [math.exp(s - max_s) for s in scores]  # l'exponentielle amplifie les ecarts\n"
         "    total = sum(exps)\n"
         "    return [e / total for e in exps]  # diviser par le total -> somme = 1"
+    )
+)
+
+# ----------------------------------------------------------------
+# CELL: MD — interaction Callysto (NC-02)
+# ----------------------------------------------------------------
+cells.append(
+    md(
+        "**A toi** : lis le code `forward()` ci-dessus. Combien de multiplications\n"
+        "fait-il pour un contexte de 3 lettres avec EMBED_DIM=8 et 27 lettres de sortie ?\n"
+        "\n"
+        "> Reponse : 24 \\u00d7 27 = 648 multiplications. C'est un produit matrice \\u00d7 vecteur !"
     )
 )
 

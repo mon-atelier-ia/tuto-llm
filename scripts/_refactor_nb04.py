@@ -32,12 +32,18 @@ def code(source):
 with open("notebooks/04_lattention.ipynb", encoding="utf-8") as f:
     nb = json.load(f)
 
-# Extract verifier and exercice from original cell-1
-original_cell1 = "".join(
-    nb["cells"][1]["source"]
-    if isinstance(nb["cells"][1]["source"], list)
-    else [nb["cells"][1]["source"]]
-)
+# Find infra code cell dynamically (not hardcoded index -- Vocabulaire may shift it)
+original_cell1 = ""
+for _cell in nb["cells"]:
+    if _cell["cell_type"] == "code":
+        _src = (
+            "".join(_cell["source"])
+            if isinstance(_cell["source"], list)
+            else _cell["source"]
+        )
+        if "def verifier" in _src:
+            original_cell1 = _src
+            break
 verifier_match = re.search(
     r"(def verifier\(.*?\n(?:(?:    .*|)\n)*)", original_cell1, re.MULTILINE
 )
@@ -72,7 +78,7 @@ cells.append(
         'le lien entre "dort", "chat" et "canape" -- meme si ces mots ne sont\n'
         "pas cote a cote.\n"
         "\n"
-        "C'est exactement ce que fait le **mecanisme d'attention** :\n"
+        "C'est exactement ce que fait le **mecanisme d'attention** (*self-attention*) :\n"
         "il permet au modele de regarder **n'importe quel** element du passe,\n"
         "pas seulement les derniers."
     )
@@ -95,7 +101,7 @@ cells.append(
 # ----------------------------------------------------------------
 infra = (
     "# ============================================================\n"
-    "# Cellule d'initialisation \\u2014 execute sans lire (Shift+Entree)\n"
+    "# Cellule d'initialisation \\u2014 outils et fonctions utilitaires\n"
     "# ============================================================\n"
     "\n"
     "import json\n"

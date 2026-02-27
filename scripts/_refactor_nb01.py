@@ -30,9 +30,18 @@ def code(source):
 with open("notebooks/01_deviner_la_suite.ipynb", encoding="utf-8") as f:
     nb = json.load(f)
 
-# Extract original cell-1 source (verifier + exercice functions)
-original_cell1_lines = nb["cells"][1]["source"]
-original_cell1 = "".join(original_cell1_lines)
+# Find infra code cell dynamically (not hardcoded index -- Vocabulaire may shift it)
+original_cell1 = ""
+for _cell in nb["cells"]:
+    if _cell["cell_type"] == "code":
+        _src = (
+            "".join(_cell["source"])
+            if isinstance(_cell["source"], list)
+            else _cell["source"]
+        )
+        if "def verifier" in _src:
+            original_cell1 = _src
+            break
 
 # Extract verifier function (from "def verifier" to next "def " or blank line pattern)
 verifier_match = re.search(
@@ -100,7 +109,7 @@ cells.append(
 
 infra_source = (
     "# ============================================================\n"
-    "# Cellule d'initialisation \\u2014 execute sans lire (Shift+Entree)\n"
+    "# Cellule d'initialisation \\u2014 outils et fonctions utilitaires\n"
     "# ============================================================\n"
     "\n"
     "import json\n"
