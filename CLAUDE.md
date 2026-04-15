@@ -72,3 +72,8 @@ docs/               # Documentation ISO et gouvernance IA
 - @docs/AI_POLICY.md : Politique de gouvernance IA
 - @docs/ISO_STANDARDS_REFERENCE.md : Référence des normes ISO
 - @CONTRIBUTING.md : Guide de contribution
+
+
+## Wiki
+
+Syntheses wiki : `C:\Dev\wiki\topics\ia\` (subdomains microgpt, pedagogy) et `C:\Dev\wiki\entities\tuto-llm.md`
